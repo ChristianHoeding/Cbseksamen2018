@@ -13,11 +13,12 @@ public final class Encryption {
 
       // Stringbuilder enables you to play around with strings and make useful stuff
       StringBuilder thisIsEncrypted = new StringBuilder();
-
-      // TODO: This is where the magic of XOR is happening. Are you able to explain what is going on?
+// Ovenstående oprettes et objekt af Stringbuilder
+      // TODO: This is where the magic of XOR is happening. Are you able to explain what is going on?  - Fixed
       for (int i = 0; i < rawString.length(); i++) {
         thisIsEncrypted.append((char) (rawString.charAt(i) ^ key[i % key.length]));
       }
+      // Linje 19 betyder at der skal bygges en Streng af bogstaver, hvor du ligger de binære værdier for hver bogstav i din streng med bogstav fra din char array.
 
       // We return the encrypted string
       return thisIsEncrypted.toString();
