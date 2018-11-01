@@ -21,6 +21,9 @@ public final class Config {
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
   private static String Saltkey;
+  private static String EncryptionKey;
+
+
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -68,6 +71,8 @@ public final class Config {
 
   public static String gethashWithMd5(){return Saltkey;}
 
+  public static String getEncryptionkeyArray (){return EncryptionKey ;}
+
   //public static String gethashWithsha(){return Saltkey;}
 
   public static void initializeConfig() throws IOException {
@@ -105,5 +110,8 @@ public final class Config {
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
     Saltkey = json.get("Saltkey").getAsString();
+    EncryptionKey = json.get("EncryptionKey").getAsString();
+// Nedenstående har jeg lavet et Array indeholdende alle mine Encryption nøgler
+
   }
 }

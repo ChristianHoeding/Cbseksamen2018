@@ -93,17 +93,32 @@ public class UserEndpoints {
     return Response.status(400).entity("Endpoint not implemented yet").build();
   }
 
-  // TODO: Make the system able to delete users
-  public Response deleteUser(String x) {
+  // TODO: Make the system able to delete users - Fixed
+  @POST
+  @Path("/delete/{delete}")
+  public Response deleteUser(@PathParam("delete") int idToDelete) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    UserController.deleteUser(idToDelete);
+
+
+if (idToDelete!=0){
+  return Response.status(200).entity("User with "+ idToDelete + " has now been deleted").build();
+} else{
+  return Response.status(400).entity("The user could not be deleted").build();}
   }
 
   // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  @POST
+  @Path("/update/{update}")
+  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+
+    UserController.updateUser(idToUpdate);
+
+    if(idToUpdate !=0){
+      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
+    } else{
+      return Response.status(400).entity("User could not be updated").build();
+    }
   }
 }

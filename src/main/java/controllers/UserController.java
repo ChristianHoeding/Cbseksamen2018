@@ -117,7 +117,7 @@ public class UserController {
             + "', '"
             + user.getLastname()
             + "', '"
-            + hashing.saltWithMd5(user.getPassword())
+            + hashing.saltWithMd5(user.getPassword()) // Her hashes password - Vi har oprettet et objekt af Hashing klassen, hvori vi har en metode der hedder "saltWithMd5"
             + "', '"
             + user.getEmail()
             + "', "
@@ -134,5 +134,30 @@ public class UserController {
 
     // Return user
     return user;
+  }
+
+
+  public static void deleteUser(int id){
+    // Her skabes der forbindelse til DB
+
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    String sql = "DELETE FROM user WHERE id=" + id;
+
+    dbCon.deleteUser(sql);
+
+  }
+
+  public static void updateUser (int id){
+
+    // Her skabes der forbindelse til DB
+    if (dbCon==null){
+      dbCon= new DatabaseController();
+    }
+
+    String sql = "UPDATE FROM user WHERE id="+id;
+    dbCon.updateUser(sql);
   }
 }

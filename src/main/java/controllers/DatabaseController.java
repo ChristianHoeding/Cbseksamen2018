@@ -110,4 +110,39 @@ public class DatabaseController {
     // Return the resultset which at this point will be null
     return result;
   }
+
+  public void deleteUser(String sql){
+    //Tjekker om der er forbindelse til databasen
+    if (connection==null)
+      connection=getConnection();
+
+    try{
+
+      PreparedStatement statement = connection.prepareStatement(sql);
+
+      statement.executeUpdate();
+
+
+    }catch (SQLException e){
+      System.out.println(e.getMessage());
+    }
+
+
+  }
+  public void updateUser(String sql){
+    // tjekker om der er forbindelse til databasen
+
+    if (connection==null)
+      connection=getConnection();
+
+    try{
+
+      PreparedStatement statement = connection.prepareStatement(sql);
+      statement.executeUpdate();
+
+
+    }catch (SQLException e){
+      System.out.println(e.getMessage());
+    }
+  }
 }
