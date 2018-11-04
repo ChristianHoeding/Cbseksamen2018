@@ -150,14 +150,14 @@ public class UserController {
 
   }
 
-  public static void updateUser (int id){
-
-    // Her skabes der forbindelse til DB
-    if (dbCon==null){
-      dbCon= new DatabaseController();
-    }
-
-    String sql = "UPDATE FROM user WHERE id="+id;
-    dbCon.updateUser(sql);
-  }
+//  public static void updateUser (int id){
+//
+//    // Her skabes der forbindelse til DB
+//    if (dbCon==null){
+//      dbCon= new DatabaseController();
+//    }
+//
+//    String sql = "UPDATE FROM user WHERE id="+id;
+//    dbCon.updateUser(sql);
+//  }
 }

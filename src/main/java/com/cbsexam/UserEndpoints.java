@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
@@ -39,6 +40,8 @@ public class UserEndpoints {
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
+  private static UserCache UserCache = new UserCache();
+
   /** @return Responses */
   @GET
   @Path("/")
@@ -48,7 +51,7 @@ public class UserEndpoints {
     Log.writeLog(this.getClass().getName(), this, "Get all users", 0);
 
     // Get a list of users
-    ArrayList<User> users = UserController.getUsers();
+    ArrayList<User> users = UserCache.getUsers(false);
 
     // TODO: Add Encryption to JSON - fixed
     // Transfer users to json in order to return it to the user
@@ -102,23 +105,23 @@ public class UserEndpoints {
 
 
 if (idToDelete!=0){
-  return Response.status(200).entity("User with "+ idToDelete + " has now been deleted").build();
+  return Response.status(200).entity(" The User with "+ idToDelete + " has now been deleted").build();
 } else{
   return Response.status(400).entity("The user could not be deleted").build();}
   }
 
-  // TODO: Make the system able to update users
-  @POST
-  @Path("/update/{update}")
-  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
-
-
-    UserController.updateUser(idToUpdate);
-
-    if(idToUpdate !=0){
-      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
-    } else{
-      return Response.status(400).entity("User could not be updated").build();
-    }
-  }
+//  // TODO: Make the system able to update users
+//  @POST
+//  @Path("/update/{update}")
+//  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
+//
+//
+//    UserController.updateUser(idToUpdate);
+//
+//    if(idToUpdate !=0){
+//      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
+//    } else{
+//      return Response.status(400).entity("User could not be updated").build();
+//    }
+//  }
 }

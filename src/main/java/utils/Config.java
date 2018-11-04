@@ -20,6 +20,8 @@ public final class Config {
   private static String SOLR_PATH;
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
+  private static long USER_TTL; // selv tilføjet
+  private static long ORDER_TTL; // selv tilføjet
   private static String Saltkey;
   private static String EncryptionKey;
 
@@ -28,6 +30,10 @@ public final class Config {
   public static long getProductTtl() {
     return PRODUCT_TTL;
   }
+
+  public static long getUserTtl(){return USER_TTL;} // selv tilføjet
+
+  public static long getOrderTtl(){return ORDER_TTL;} // selv tilføjet
 
   public static String getDatabaseHost() {
     return DATABASE_HOST;
@@ -69,9 +75,9 @@ public final class Config {
     return SOLR_CORE;
   }
 
-  public static String gethashWithMd5(){return Saltkey;}
+  public static String gethashWithMd5(){return Saltkey;} // selv tilføjet
 
-  public static String getEncryptionkeyArray (){return EncryptionKey ;}
+  public static String getEncryptionkeyArray (){return EncryptionKey ;} // selv tilføjet
 
   //public static String gethashWithsha(){return Saltkey;}
 
@@ -109,9 +115,10 @@ public final class Config {
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
-    Saltkey = json.get("Saltkey").getAsString();
-    EncryptionKey = json.get("EncryptionKey").getAsString();
-// Nedenstående har jeg lavet et Array indeholdende alle mine Encryption nøgler
+    USER_TTL = json.get("USER_TTL").getAsLong(); // selv tilføjet
+    ORDER_TTL = json.get("ORDER_TTL").getAsLong(); // selv tilføjet
+    Saltkey = json.get("Saltkey").getAsString(); // selv tilføjet
+    EncryptionKey = json.get("EncryptionKey").getAsString(); // selv tilføjet
 
   }
 }
