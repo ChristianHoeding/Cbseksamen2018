@@ -40,7 +40,7 @@ public class UserEndpoints {
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
-  private static UserCache UserCache = new UserCache();
+  public static UserCache UserCache = new UserCache(); // selv tilføjet
 
   /** @return Responses */
   @GET
@@ -105,23 +105,40 @@ public class UserEndpoints {
 
 
 if (idToDelete!=0){
+  UserCache.getUsers(true);
   return Response.status(200).entity(" The User with "+ idToDelete + " has now been deleted").build();
 } else{
   return Response.status(400).entity("The user could not be deleted").build();}
   }
 
-//  // TODO: Make the system able to update users
-//  @POST
-//  @Path("/update/{update}")
-//  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
-//
-//
-//    UserController.updateUser(idToUpdate);
-//
-//    if(idToUpdate !=0){
-//      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
-//    } else{
-//      return Response.status(400).entity("User could not be updated").build();
-//    }
-//  }
+  // TODO: Make the system able to update users - fixed
+  @POST
+  @Path("/update/{update}")
+  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
+
+    User updates = new Gson().fromJson(body, User.class);
+
+    User currentuser = UserController.getUser(idToUpdate);
+
+    if(updates.getFirstname() == null){
+      updates.setFirstname(currentuser.getFirstname());
+    }
+
+    if(updates.getLastname() == null){
+      updates.setLastname(currentuser.getLastname());
+    }
+
+    if(updates.getEmail() == null){
+      updates.setEmail(currentuser.getEmail());
+    }
+
+    UserController.updateUser(idToUpdate, updates);
+
+    if(idToUpdate !=0){
+      UserCache.getUsers(true);
+      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
+    } else{
+      return Response.status(400).entity("User could not be updated").build();
+    }
+  }
 }
