@@ -1,11 +1,8 @@
 package cache;
 
 import controllers.OrderController;
-import controllers.ProductController;
 import java.util.ArrayList;
-
 import model.Order;
-import model.Product;
 import utils.Config;
 //TODO: Build this cache and use it. fixed
 public class OrderCache {
