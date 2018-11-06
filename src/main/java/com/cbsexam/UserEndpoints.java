@@ -38,7 +38,7 @@ public class UserEndpoints {
     // Return the user with the status code 200
     // TODO: What should happen if something breaks down? - fixed
     UserController.getUser(idUser);
-
+// Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
     if(user!=null){
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     }else
@@ -65,8 +65,15 @@ public class UserEndpoints {
     // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class. Furthermore it takes json in it's parameter.
     json = Encryption.encryptDecryptXOR(json);
 
+    UserController.getUsers();
+
     // Return the users with the status code 200
-    return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
+    // Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
+    if(users!=null){
+      return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
+    }else
+      return Response.status(400).type("Something went wrong").build();
+
   }
 
   @POST
