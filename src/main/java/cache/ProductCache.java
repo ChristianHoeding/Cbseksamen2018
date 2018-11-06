@@ -6,7 +6,7 @@ import model.Product;
 import utils.Config;
 
 public class ProductCache {
-
+  // TODO: Use caching layer. - fixed
   // List of products
   private ArrayList<Product> products;
 
