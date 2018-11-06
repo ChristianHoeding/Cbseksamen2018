@@ -111,7 +111,7 @@ public class DatabaseController {
     return result;
   }
 
-  public void deleteUser(String sql){
+  public boolean deleteUser(String sql){
     //Tjekker om der er forbindelse til databasen
     if (connection==null)
       connection=getConnection();
@@ -121,15 +121,17 @@ public class DatabaseController {
       PreparedStatement statement = connection.prepareStatement(sql);
 
       statement.executeUpdate();
+      return true;
 
 
     }catch (SQLException e){
       System.out.println(e.getMessage());
+      return false;
     }
 
 
   }
-  public void updateUser(String sql){
+  public boolean updateUser(String sql){
     // tjekker om der er forbindelse til databasen
 
     if (connection==null)
@@ -139,10 +141,12 @@ public class DatabaseController {
 
       PreparedStatement statement = connection.prepareStatement(sql);
       statement.executeUpdate();
+      return true;
 
 
     }catch (SQLException e){
       System.out.println(e.getMessage());
+      return false;
     }
   }
 }

@@ -36,8 +36,14 @@ public class UserEndpoints {
     json = Encryption.encryptDecryptXOR(json);
 
     // Return the user with the status code 200
-    // TODO: What should happen if something breaks down?
-    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    // TODO: What should happen if something breaks down? - fixed
+    UserController.getUser(idUser);
+
+    if(user!=null){
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    }else
+      return Response.status(400).type("Something went wrong ").build();
+
   }
 
   public static UserCache UserCache = new UserCache(); // selv tilføjet
@@ -101,11 +107,11 @@ public class UserEndpoints {
   @Path("/delete/{delete}")
   public Response deleteUser(@PathParam("delete") int idToDelete) {
 
-    UserController.deleteUser(idToDelete);
 
+    boolean success = UserController.deleteUser(idToDelete);
+    UserCache.getUsers(true);
 
-if (idToDelete!=0){
-  UserCache.getUsers(true);
+if (success){
   return Response.status(200).entity(" The User with "+ idToDelete + " has now been deleted").build();
 } else{
   return Response.status(400).entity("The user could not be deleted").build();}
@@ -131,11 +137,13 @@ if (idToDelete!=0){
     if(updates.getEmail() == null){
       updates.setEmail(currentuser.getEmail());
     }
+    // LAv en metode til at ændre password
 
-    UserController.updateUser(idToUpdate, updates);
+    boolean success = UserController.updateUser(idToUpdate, updates);
+    UserCache.getUsers(true);
 
-    if(idToUpdate !=0){
-      UserCache.getUsers(true);
+    if(success){
+      // Dette betyder at vi henter data fra Databasen og ikke fra cachen.
       return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
     } else{
       return Response.status(400).entity("User could not be updated").build();

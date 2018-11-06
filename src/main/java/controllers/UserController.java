@@ -33,12 +33,12 @@ public class UserController {
       // Get first object, since we only have one
       if (rs.next()) {
         user =
-            new User(
-                rs.getInt("id"),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                rs.getString("password"),
-                rs.getString("email"));
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
 
         // return the create object
         return user;
@@ -76,12 +76,12 @@ public class UserController {
       // Loop through DB Data
       while (rs.next()) {
         User user =
-            new User(
-                rs.getInt("id"),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                rs.getString("password"),
-                rs.getString("email"));
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
 
         // Add element to list
         users.add(user);
@@ -112,22 +112,22 @@ public class UserController {
     // Insert the user in the DB
     // TODO: Hash the user password before saving it fixed - we are calling the class Hashing by creating an object. Furthermore we are calling the method "hashWithMd5"  .
     int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
-            + user.getFirstname()
-            + "', '"
-            + user.getLastname()
-            + "', '"
-            + hashing.saltWithMd5(user.getPassword()) // Her hashes password - Vi har oprettet et objekt af Hashing klassen, hvori vi har en metode der hedder "saltWithMd5"
-            + "', '"
-            + user.getEmail()
-            + "', "
-            + user.getCreatedTime()
-            + ")");
+            "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
+                    + user.getFirstname()
+                    + "', '"
+                    + user.getLastname()
+                    + "', '"
+                    + hashing.saltWithMd5(user.getPassword()) // Her hashes password - Vi har oprettet et objekt af Hashing klassen, hvori vi har en metode der hedder "saltWithMd5"
+                    + "', '"
+                    + user.getEmail()
+                    + "', "
+                    + user.getCreatedTime()
+                    + ")");
 
     if (userID != 0) {
       //Update the userid of the user before returning
       user.setId(userID);
-    } else{
+    } else {
       // Return null if user has not been inserted into database
       return null;
     }
@@ -137,27 +137,31 @@ public class UserController {
   }
 
 
-  public static void deleteUser(int id){
+  public static boolean deleteUser(int id) {
     // Her skabes der forbindelse til DB
 
     if (dbCon == null) {
       dbCon = new DatabaseController();
     }
-
+    User user = UserController.getUser(id);
     String sql = "DELETE FROM user WHERE id=" + id;
 
-    dbCon.deleteUser(sql);
+    return user != null && dbCon.deleteUser(sql);
 
   }
 
-  public static void updateUser (int id, User updates){
+
+
+  public static boolean updateUser (int id, User updates){
 
     // Her skabes der forbindelse til DB
     if (dbCon==null){
       dbCon= new DatabaseController();
     }
-
+    User user = UserController.getUser(id);
     String sql = "Update user set first_name = ' "+ updates.getFirstname() + "', last_name='" + updates.getLastname() + "', email=' " + updates.getEmail() + "' Where id = " + id;
-    dbCon.updateUser(sql);
+
+    return user != null && dbCon.updateUser(sql);
+
   }
 }
