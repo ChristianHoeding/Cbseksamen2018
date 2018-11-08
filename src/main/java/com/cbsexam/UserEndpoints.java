@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
 import utils.Encryption;
+import utils.Hashing;
 import utils.Log;
 
 @Path("user")
@@ -71,8 +72,10 @@ public class UserEndpoints {
     // Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
     if(users!=null){
       return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
-    }else
+    }else{
       return Response.status(400).type("Something went wrong").build();
+    }
+
 
   }
 
@@ -103,11 +106,22 @@ public class UserEndpoints {
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response loginUser(String x) {
+  public Response loginUser(String loginVerification) {
+    User loginUser = new Gson().fromJson(loginVerification, User.class);
+    Hashing hashing = new Hashing();
+
+    User dbUser = UserController.getUserByEmail(loginUser.getEmail());
+    String json = new Gson().toJson(dbUser);
 
     // Return a response with status 200 and JSON as type
+    if(loginUser.getEmail().equals(dbUser.getEmail()) && loginUser.getPassword().equals(dbUser.getPassword())){
+      return Response.status(200).entity("The user with '" + json + "has now been succesfully logged in'").build();
+
+    }
+
+
     return Response.status(400).entity("Endpoint not implemented yet").build();
-  }
+    }
 
   // TODO: Make the system able to delete users - Fixed
   @POST

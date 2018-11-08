@@ -25,7 +25,7 @@ public class OrderController {
     }
 
     // Build SQL string to query
-    String sql = "SELECT * FROM order where id=" + id; // selv tilføjet har fjernet et -s fra order
+    String sql = "SELECT * FROM orders where id=" + id; // selv tilføjet har fjernet et -s fra order
 
     // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);

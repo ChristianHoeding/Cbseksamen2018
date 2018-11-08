@@ -77,7 +77,7 @@ public final class Config {
 
   public static String gethashWithMd5(){return Saltkey;} // selv tilføjet
 
-  public static String getEncryptionkeyArray (){return EncryptionKey ;} // selv tilføjet
+  public static String getEncryptionkey(){return EncryptionKey ;} // selv tilføjet
 
   //public static String gethashWithsha(){return Saltkey;}
 

@@ -10,7 +10,7 @@ public final class Encryption {
       // The key is predefined and hidden in code
       // TODO: Create a more complex code and store it somewhere better Fixed - Down below we are telling the system where the key is
       // Vi laver en key String "encryptionKey" som vi sætter lig med path til hvor vores nøgle ligger henne.
-      String encryptionKey = Config.getEncryptionkeyArray();
+      String encryptionKey = Config.getEncryptionkey();
       // Nedenstående sætter vi vores char arrray med navnet "key" lig med vores "encryptionkey" som vi laver om til et charArrray.
       char[]key = encryptionKey.toCharArray();
 
