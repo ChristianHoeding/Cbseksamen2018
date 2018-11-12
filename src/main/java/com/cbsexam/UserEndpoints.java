@@ -113,6 +113,7 @@ public class UserEndpoints {
      // Nedenstående ses objektet for Database useren
     User dbUser = UserController.getUserByEmail(loginUser.getEmail());
     String json = new Gson().toJson(dbUser);
+    
 
     // Return a response with status 200 and JSON as type
     if(loginUser.getEmail().equals(dbUser.getEmail()) && hashing.saltWithMd5(loginUser.getPassword()).equals(dbUser.getPassword())){
