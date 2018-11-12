@@ -67,6 +67,7 @@ public class UserEndpoints {
     json = Encryption.encryptDecryptXOR(json);
 
     UserController.getUsers();
+    UserCache.getUsers(true);
 
     // Return the users with the status code 200
     // Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
@@ -96,7 +97,7 @@ public class UserEndpoints {
     // Return the data to the user
     if (createUser != null) {
       // Return a response with status 200 and JSON as type
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity( "The User with '" +json + " Has now been created'").build();
     } else {
       return Response.status(400).entity("Could not create user").build();
     }
@@ -106,15 +107,15 @@ public class UserEndpoints {
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response loginUser(String loginVerification) {
-    User loginUser = new Gson().fromJson(loginVerification, User.class);
+  public Response loginUser(String UserBody) {
+    User loginUser = new Gson().fromJson(UserBody, User.class);
     Hashing hashing = new Hashing();
-
+     // Nedenstående ses objektet for Database useren
     User dbUser = UserController.getUserByEmail(loginUser.getEmail());
     String json = new Gson().toJson(dbUser);
 
     // Return a response with status 200 and JSON as type
-    if(loginUser.getEmail().equals(dbUser.getEmail()) && loginUser.getPassword().equals(dbUser.getPassword())){
+    if(loginUser.getEmail().equals(dbUser.getEmail()) && hashing.saltWithMd5(loginUser.getPassword()).equals(dbUser.getPassword())){
       return Response.status(200).entity("The user with '" + json + "has now been succesfully logged in'").build();
 
     }
