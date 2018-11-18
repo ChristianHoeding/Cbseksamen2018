@@ -192,6 +192,7 @@ public class UserController {
                         rs.getString("last_name"),
                         rs.getString("password"),
                         rs.getString("email"));
+
         Algorithm algorithm = Algorithm.HMAC256("CBS");
         String token = JWT.create().withClaim("userId",user.getId()).sign(algorithm);
         user.setToken(token);
