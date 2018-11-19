@@ -1,6 +1,9 @@
 package com.cbsexam;
 
 import cache.UserCache;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import controllers.UserController;
 
@@ -143,14 +146,17 @@ if (success){
 
   // TODO: Make the system able to update users - fixed
   @POST
-  @Path("/update/{update}")
-  public Response updateUser(@PathParam("update") int idToUpdate, String body) {
+  @Path("/update/")
+  public Response updateUser( String infoToUpdate) {
 
-    User updates = new Gson().fromJson(body, User.class);
-
-    User currentuser = UserController.getUser(idToUpdate);
+    User updates = new Gson().fromJson(infoToUpdate, User.class);
+    try {
+      DecodedJWT jwt = JWT.decode(updates.getToken());
+    } catch (JWTDecodeException exception){
+      //Invalid token
+    }
+    User currentuser = UserController.getUser();
     Hashing hashing = new Hashing();
-
     String password;
 
     if(updates.getFirstname() == null){

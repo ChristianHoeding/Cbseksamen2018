@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.google.gson.Gson;
 import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
 import model.User;
 import utils.Hashing;
@@ -194,8 +195,9 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
+        String json = new Gson().toJson(user);
         Algorithm algorithm = Algorithm.HMAC256("CBS");
-        String token = JWT.create().withClaim("userId",user.getId()).sign(algorithm);
+        String token = JWT.create().withClaim("userId",json).sign(algorithm);
         user.setToken(token);
 
         // return the create object
