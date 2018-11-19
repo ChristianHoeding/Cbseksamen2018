@@ -3,6 +3,8 @@ package com.cbsexam;
 import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -147,6 +149,9 @@ if (success){
     User updates = new Gson().fromJson(body, User.class);
 
     User currentuser = UserController.getUser(idToUpdate);
+    Hashing hashing = new Hashing();
+
+    String password;
 
     if(updates.getFirstname() == null){
       updates.setFirstname(currentuser.getFirstname());
@@ -159,6 +164,16 @@ if (success){
     if(updates.getEmail() == null){
       updates.setEmail(currentuser.getEmail());
     }
+    if (updates.getPassword()== null) {
+      password = currentuser.getPassword();
+      //updates.setPassword(currentuser.getPassword());
+    }else{
+      password = hashing.saltWithMd5(updates.getPassword());
+      //hashing.saltWithMd5(updates.getPassword());
+    }
+
+    updates.setPassword(password);
+
     // LAv en metode til at ændre password
 
     boolean success = UserController.updateUser(idToUpdate, updates);

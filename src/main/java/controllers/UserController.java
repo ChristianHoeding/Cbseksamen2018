@@ -164,7 +164,8 @@ public class UserController {
       dbCon= new DatabaseController();
     }
     User user = UserController.getUser(id);
-    String sql = "Update user set first_name = ' "+ updates.getFirstname() + "', last_name='" + updates.getLastname() + "', email=' " + updates.getEmail() + "' Where id = " + id;
+    String sql = "Update user set first_name = ' "+ updates.getFirstname() + "', last_name='" + updates.getLastname() +
+            "', email='" + updates.getEmail() + "', password = '" + updates.getPassword() + "' Where id = " + id;
 
     return user != null && dbCon.updateUser(sql);
 

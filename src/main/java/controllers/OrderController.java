@@ -130,6 +130,7 @@ public class OrderController {
 
     // Save addresses to database and save them back to initial order instance
     try {
+      // Databasecontrolleren er sat til at skulle autocommitte hver gang - i dette tilfælde sætter vi autocommit til at være false, så vi kun committer når udfaldet ikke er false.
       DatabaseController.getConnection().setAutoCommit(false);
 
 
@@ -169,6 +170,7 @@ public class OrderController {
       for (LineItem item : order.getLineItems()) {
         item = LineItemController.createLineItem(item, order.getId());
         items.add(item);
+        DatabaseController.getConnection().commit();
       }
 
       order.setLineItems(items);
