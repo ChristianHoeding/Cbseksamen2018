@@ -197,7 +197,7 @@ public class UserController {
 
         String json = new Gson().toJson(user);
         Algorithm algorithm = Algorithm.HMAC256("CBS");
-        String token = JWT.create().withClaim("userId",json).sign(algorithm);
+        String token = JWT.create().withClaim("UserInJson",json).sign(algorithm);
         user.setToken(token);
 
         // return the create object

@@ -5,6 +5,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
+import com.sun.xml.internal.fastinfoset.DecoderStateTables;
 import controllers.UserController;
 
 import java.sql.SQLException;
@@ -150,29 +151,30 @@ if (success){
   public Response updateUser( String infoToUpdate) {
 
     User updates = new Gson().fromJson(infoToUpdate, User.class);
+    DecodedJWT jwt = null;
     try {
-      DecodedJWT jwt = JWT.decode(updates.getToken());
+      jwt = JWT.decode(updates.getToken());
     } catch (JWTDecodeException exception){
       //Invalid token
     }
-    User currentuser = UserController.getUser();
+    User currentUser = new Gson().fromJson(jwt.getClaim("UserInJson").asString(),User.class);
     Hashing hashing = new Hashing();
     String password;
 
     if(updates.getFirstname() == null){
-      updates.setFirstname(currentuser.getFirstname());
+      updates.setFirstname(currentUser.getFirstname());
     }
 
     if(updates.getLastname() == null){
-      updates.setLastname(currentuser.getLastname());
+      updates.setLastname(currentUser.getLastname());
     }
 
     if(updates.getEmail() == null){
-      updates.setEmail(currentuser.getEmail());
+      updates.setEmail(currentUser.getEmail());
     }
     if (updates.getPassword()== null) {
-      password = currentuser.getPassword();
-      //updates.setPassword(currentuser.getPassword());
+      password = currentUser.getPassword();
+      //updates.setPassword(currentUser.getPassword());
     }else{
       password = hashing.saltWithMd5(updates.getPassword());
       //hashing.saltWithMd5(updates.getPassword());
@@ -182,12 +184,12 @@ if (success){
 
     // LAv en metode til at ændre password
 
-    boolean success = UserController.updateUser(idToUpdate, updates);
+    boolean success = UserController.updateUser(currentUser.getId(), updates);
     UserCache.getUsers(true);
 
     if(success){
       // Dette betyder at vi henter data fra Databasen og ikke fra cachen.
-      return Response.status(200).entity("User with " + idToUpdate + " has now been updated").build();
+      return Response.status(200).entity("User with " + currentUser.getId() + " has now been updated").build();
     } else{
       return Response.status(400).entity("User could not be updated").build();
     }
