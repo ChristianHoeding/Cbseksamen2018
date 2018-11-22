@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
 import model.User;
@@ -143,11 +145,21 @@ public class UserController {
   }
 
 
-  public static boolean deleteUser(int id) {
+  public static boolean deleteUser(String token) {
     // Her skabes der forbindelse til DB
+    DecodedJWT jwt = null;
+    try {
+      jwt = JWT.decode(token);
+    } catch (JWTDecodeException exception){
+      //Invalid token
+    }
+    int id=jwt.getClaim("Userid").asInt();
+    Log.writeLog(UserController.class.getName(), id, "deleting a user in the Database", 0);
 
+    // Her skabes der forbindelse til DB
     if (dbCon == null) {
       dbCon = new DatabaseController();
+
     }
     User user = UserController.getUser(id);
     String sql = "DELETE FROM user WHERE id=" + id;
@@ -158,17 +170,46 @@ public class UserController {
 
 
 
-  public static boolean updateUser (int id, User updates){
+  public static User updateUser (User updates){
+    DecodedJWT jwt = null;
+    try {
+      jwt = JWT.decode(updates.getToken());
+    } catch (JWTDecodeException exception){
+      //Invalid token
+    }
+    int id =jwt.getClaim("Userid").asInt();
+    Hashing hashing = new Hashing();
 
     // Her skabes der forbindelse til DB
     if (dbCon==null){
       dbCon= new DatabaseController();
     }
-    User user = UserController.getUser(id);
+    User userToChange = UserController.getUser(id);
+
+    if(updates.getFirstname() == null){
+      updates.setFirstname(userToChange.getFirstname());
+    }
+
+    if(updates.getLastname() == null){
+      updates.setLastname(userToChange.getLastname());
+    }
+
+    if(updates.getEmail() == null){
+      updates.setEmail(userToChange.getEmail());
+    }
+    if (updates.getPassword()== null) {
+      updates.setPassword(userToChange.getPassword());
+    }else{
+      updates.setPassword(hashing.saltWithMd5(updates.getPassword()));
+
+    }
     String sql = "Update user set first_name = ' "+ updates.getFirstname() + "', last_name='" + updates.getLastname() +
             "', email='" + updates.getEmail() + "', password = '" + updates.getPassword() + "' Where id = " + id;
 
-    return user != null && dbCon.updateUser(sql);
+    if(dbCon.updateUser(sql)){
+      return updates;
+    }
+    return null;
 
   }
   public static User getUserByEmail(String emailInfo){
@@ -195,9 +236,9 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
-        String json = new Gson().toJson(user);
+// .withClaim("exp",3600)
         Algorithm algorithm = Algorithm.HMAC256("CBS");
-        String token = JWT.create().withClaim("UserInJson",json).sign(algorithm);
+        String token = JWT.create().withClaim("Userid",user.getId()).sign(algorithm);
         user.setToken(token);
 
         // return the create object

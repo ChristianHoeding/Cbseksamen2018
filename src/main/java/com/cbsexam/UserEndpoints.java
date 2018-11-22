@@ -10,11 +10,7 @@ import controllers.UserController;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
@@ -114,6 +110,7 @@ public class UserEndpoints {
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response loginUser(String UserBody) {
+// nedenstående laves User objektet til Gson fra Json, hvilket gør det muligt for Java at håndtere det som et objekt.
     User loginUser = new Gson().fromJson(UserBody, User.class);
     Hashing hashing = new Hashing();
      // Nedenstående ses objektet for Database useren
@@ -131,16 +128,16 @@ public class UserEndpoints {
     }
 
   // TODO: Make the system able to delete users - Fixed
-  @POST
-  @Path("/delete/{delete}")
-  public Response deleteUser(@PathParam("delete") int idToDelete) {
+  @DELETE
+  @Path("/delete/")
+  public Response deleteUser(String token) {
 
 
-    boolean success = UserController.deleteUser(idToDelete);
+    boolean success = UserController.deleteUser(token);
     UserCache.getUsers(true);
 
 if (success){
-  return Response.status(200).entity(" The User with "+ idToDelete + " has now been deleted").build();
+  return Response.status(200).entity(" The User has been deleted").build();
 } else{
   return Response.status(400).entity("The user could not be deleted").build();}
   }
@@ -150,46 +147,16 @@ if (success){
   @Path("/update/")
   public Response updateUser( String infoToUpdate) {
 
-    User updates = new Gson().fromJson(infoToUpdate, User.class);
-    DecodedJWT jwt = null;
-    try {
-      jwt = JWT.decode(updates.getToken());
-    } catch (JWTDecodeException exception){
-      //Invalid token
-    }
-    User currentUser = new Gson().fromJson(jwt.getClaim("UserInJson").asString(),User.class);
-    Hashing hashing = new Hashing();
-    String password;
+    User updatedInformation = new Gson().fromJson(infoToUpdate, User.class);
 
-    if(updates.getFirstname() == null){
-      updates.setFirstname(currentUser.getFirstname());
-    }
 
-    if(updates.getLastname() == null){
-      updates.setLastname(currentUser.getLastname());
-    }
 
-    if(updates.getEmail() == null){
-      updates.setEmail(currentUser.getEmail());
-    }
-    if (updates.getPassword()== null) {
-      password = currentUser.getPassword();
-      //updates.setPassword(currentUser.getPassword());
-    }else{
-      password = hashing.saltWithMd5(updates.getPassword());
-      //hashing.saltWithMd5(updates.getPassword());
-    }
-
-    updates.setPassword(password);
-
-    // LAv en metode til at ændre password
-
-    boolean success = UserController.updateUser(currentUser.getId(), updates);
+    User updatedUser = UserController.updateUser(updatedInformation);
     UserCache.getUsers(true);
 
-    if(success){
+    if(updatedUser !=null){
       // Dette betyder at vi henter data fra Databasen og ikke fra cachen.
-      return Response.status(200).entity("User with " + currentUser.getId() + " has now been updated").build();
+      return Response.status(200).entity("User has now been updated").build();
     } else{
       return Response.status(400).entity("User could not be updated").build();
     }

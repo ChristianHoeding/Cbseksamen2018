@@ -76,7 +76,10 @@ public class OrderController {
       dbCon = new DatabaseController();
     }
 
-    String sql = "SELECT * FROM orders";
+    String sql = "SELECT *, billing.street_address as billingadr, shipping.street_address as shippingadr FROM orders \n" +
+                 "join user on orders.user_id=user.id \n" +
+                 "join address as billingadr on orders.billing_address_id=billingadr.id \n" +
+                 "join address as shippingadr on orders.shipping_address_id=shippingadr.id";
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<Order>();
@@ -84,8 +87,15 @@ public class OrderController {
     try {
       while(rs.next()) {
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
+
+        //TODO: Perhaps we could optimize things a bit here and get rid of nested queries.
+        User user =
+                new User(
+                        rs.getInt("user_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
         Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
         Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
