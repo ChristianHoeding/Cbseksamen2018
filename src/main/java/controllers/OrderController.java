@@ -25,16 +25,25 @@ public class OrderController {
     }
 
     // Build SQL string to query
-    String sql = "SELECT * FROM orders where id=" + id; // selv tilføjet har fjernet et -s fra order
+    String sql = "SELECT *, \n" +
+            "billing.street_address as billing, \n" +
+            "shipping.street_address as shipping\n" +
+            "FROM orders\n" +
+            "JOIN user on orders.user_id = user.id \n" +
+            "            LEFT JOIN address as billing\n" +
+            "            ON orders.billing_address_id = billing.id \n" +
+            "            LEFT JOIN address as shipping \n" +
+            "            ON orders.shipping_address_id = shipping.id where orders.id =" +id; // Selv tilføjet
 
     // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);
     Order order = null;
 
     try {
-      // Perhaps we could optimize things a bit here and get rid of nested queries.
-      ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
       if (rs.next()) {
+        // Perhaps we could optimize things a bit here and get rid of nested queries.
+        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
+
         User user =
                 new User(
                         rs.getInt("user_id"),
@@ -96,8 +105,8 @@ public class OrderController {
 
     String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping FROM orders \n" +
                  "join user on orders.user_id=user.id \n" +
-                 "join address as billing on orders.billing_address_id=billing.id \n" +
-                 "join address as shipping on orders.shipping_address_id=shipping.id";
+                 "LEFT join address as billing on orders.billing_address_id=billing.id \n" +
+                 "LEFT join address as shipping on orders.shipping_address_id=shipping.id";
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<Order>();
