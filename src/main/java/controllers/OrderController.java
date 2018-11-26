@@ -32,13 +32,31 @@ public class OrderController {
     Order order = null;
 
     try {
+      // Perhaps we could optimize things a bit here and get rid of nested queries.
+      ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
       if (rs.next()) {
+        User user =
+                new User(
+                        rs.getInt("user_id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
+        Address billingAddress =
+                new Address(
+                        rs.getInt("billing_address_id"),
+                        rs.getString("name"),
+                        rs.getString("billing"),
+                        rs.getString("city"),
+                        rs.getString("zipcode"));
+        Address shippingAddress =
+                new Address(
+                        rs.getInt("shipping_address_id"),
+                        rs.getString("name"),
+                        rs.getString("shipping"),
+                        rs.getString("city"),
+                        rs.getString("zipcode"));
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
 
         // Create an object instance of order from the database dataa
         order =
@@ -76,10 +94,10 @@ public class OrderController {
       dbCon = new DatabaseController();
     }
 
-    String sql = "SELECT *, billing.street_address as billingadr, shipping.street_address as shippingadr FROM orders \n" +
+    String sql = "SELECT *, billing.street_address as billing, shipping.street_address as shipping FROM orders \n" +
                  "join user on orders.user_id=user.id \n" +
-                 "join address as billingadr on orders.billing_address_id=billingadr.id \n" +
-                 "join address as shippingadr on orders.shipping_address_id=shippingadr.id";
+                 "join address as billing on orders.billing_address_id=billing.id \n" +
+                 "join address as shipping on orders.shipping_address_id=shipping.id";
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Order> orders = new ArrayList<Order>();
@@ -87,7 +105,7 @@ public class OrderController {
     try {
       while(rs.next()) {
 
-
+        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
         //TODO: Perhaps we could optimize things a bit here and get rid of nested queries.
         User user =
                 new User(
@@ -96,9 +114,22 @@ public class OrderController {
                         rs.getString("last_name"),
                         rs.getString("password"),
                         rs.getString("email"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+        Address billingAddress =
+                new Address(
+                        rs.getInt("billing_address_id"),
+                        rs.getString("name"),
+                        rs.getString("billing"),
+                        rs.getString("city"),
+                        rs.getString("zipcode"));
+        Address shippingAddress =
+                new Address(
+                        rs.getInt("shipping_address_id"),
+                        rs.getString("name"),
+                        rs.getString("shipping"),
+                        rs.getString("city"),
+                        rs.getString("zipcode"));
+
+
 
         // Create an order from the database data
         Order order =
