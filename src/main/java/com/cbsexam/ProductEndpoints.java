@@ -31,7 +31,7 @@ public class ProductEndpoints {
     // TODO: Add Encryption to JSON - fixed
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(product);
-    // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class. Furthermore it takes json in it's parameter.
+    // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class.
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -49,7 +49,7 @@ private static ProductCache productCache = new ProductCache();
     // TODO: Add Encryption to JSON - fixed
     // We convert the java object to json with GSON library imported in Maven
     String json = new Gson().toJson(products);
-    // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class. Furthermore it takes json in it's parameter.
+    // Here we added encryption to the "product" by calling the method "encryptDecryptXOR" method in the Encryption class.
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
@@ -67,6 +67,8 @@ private static ProductCache productCache = new ProductCache();
     // Use the controller to add the user
     Product createdProduct = ProductController.createProduct(newProduct);
 
+    productCache.getProducts(true);
+
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createdProduct);
 
@@ -75,7 +77,7 @@ private static ProductCache productCache = new ProductCache();
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
-      return Response.status(400).entity("Could not create user").build();
+      return Response.status(400).entity("Could not create product").build();
     }
   }
 }

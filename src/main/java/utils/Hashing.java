@@ -44,7 +44,7 @@ public String hashWithMd5(String str){
 }
 
 
-  // TODO: You should add a salt and make this secure Fixed (tag beslutning om det skal være "sha" eller "Md5"
+  // TODO: You should add a salt and make this secure Fixed
   public static String sha(String rawString) {
     try {
       // We load the hashing algoritm we wish to use.

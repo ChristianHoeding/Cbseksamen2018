@@ -112,7 +112,7 @@ public class DatabaseController {
   }
 
   public boolean deleteUser(String sql){
-    //Tjekker om der er forbindelse til databasen
+    // Checks if there is connection
     if (connection==null)
       connection=getConnection();
 
@@ -132,8 +132,7 @@ public class DatabaseController {
 
   }
   public boolean updateUser(String sql){
-    // tjekker om der er forbindelse til databasen
-
+    // Checks if there is connection
     if (connection==null)
       connection=getConnection();
 

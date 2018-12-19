@@ -38,7 +38,8 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                    rs.getLong("created_at"));
 
         // Return the product
         return product;
@@ -73,11 +74,12 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                    rs.getLong("created_at"));
 
         return product;
       } else {
-        System.out.println("No user found");
+        System.out.println("No User found");
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
@@ -112,7 +114,8 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                    rs.getLong("created_at"));
 
         products.add(product);
       }
@@ -148,7 +151,7 @@ public class ProductController {
             + product.getDescription()
             + "', "
             + product.getStock()
-            + "', "
+            + ", "
             + product.getCreatedTime()
             + ")");
 

@@ -35,13 +35,12 @@ public class UserEndpoints {
     // TODO: Add Encryption to JSON - fixed
     // Convert the user object to json in order to return the object
     String json = new Gson().toJson(user);
-    // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class. Furthermore it takes json in it's parameter.
+    // Here we added encryption to the "user" by calling the method "encryptDecryptXOR" method in the Encryption class.
     json = Encryption.encryptDecryptXOR(json);
 
     // Return the user with the status code 200
     // TODO: What should happen if something breaks down? - fixed
-    UserController.getUser(idUser);
-// Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
+//  In terms of figuring out what should happen if something breaks down, the user has to be different from null
     if(user!=null){
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     }else
@@ -49,7 +48,7 @@ public class UserEndpoints {
 
   }
 
-  public static UserCache UserCache = new UserCache(); // selv tilføjet
+  public static UserCache UserCache = new UserCache();
 
   /** @return Responses */
   @GET
@@ -65,14 +64,12 @@ public class UserEndpoints {
     // TODO: Add Encryption to JSON - fixed
     // Transfer users to json in order to return it to the user
     String json = new Gson().toJson(users);
-    // Here we added encryption to the "order" by calling the method "encryptDecryptXOR" method in the Encryption class. Furthermore it takes json in it's parameter.
+    // Here we added encryption to the "users" by calling the method "encryptDecryptXOR" method in the Encryption class.
     json = Encryption.encryptDecryptXOR(json);
 
-    UserController.getUsers();
     UserCache.getUsers(true);
 
-    // Return the users with the status code 200
-    // Nedenstående if-statement angiver hvilken betingelse der skal være opfyldt for at systemet kører den rigtige status.
+    // Return the users with the status code 200 if users is different from null
     if(users!=null){
       return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
     }else{
@@ -99,26 +96,29 @@ public class UserEndpoints {
     // Return the data to the user
     if (createUser != null) {
       // Return a response with status 200 and JSON as type
+      // Down below we force the cache to update if creating a new user
+      UserCache.getUsers(true);
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity( "The User with '" +json + " Has now been created'").build();
     } else {
       return Response.status(400).entity("Could not create user").build();
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system (fixed).
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response loginUser(String UserBody) {
-// nedenstående laves User objektet til Gson fra Json, hvilket gør det muligt for Java at håndtere det som et objekt.
+// Down below the user object is transfered from Json to Gson which allows java to handle it as user object.
     User loginUser = new Gson().fromJson(UserBody, User.class);
     Hashing hashing = new Hashing();
-     // Nedenstående ses objektet for Database useren
+     // Down below we see the user object
     User dbUser = UserController.getUserByEmail(loginUser.getEmail());
     String json = new Gson().toJson(dbUser);
 
 
     // Return a response with status 200 and JSON as type
+    // checks whether or not the user is different from null
     if(dbUser != null && loginUser.getEmail().equals(dbUser.getEmail()) && hashing.saltWithMd5(loginUser.getPassword()).equals(dbUser.getPassword())){
       return Response.status(200).entity("The user with '" + json + "has now been succesfully logged in'").build();
 
@@ -132,7 +132,7 @@ public class UserEndpoints {
   @Path("/delete/")
   public Response deleteUser(String token) {
 
-
+// Down below we determine whether or not the user has been deleted
     boolean success = UserController.deleteUser(token);
     UserCache.getUsers(true);
 
@@ -150,12 +150,12 @@ if (success){
     User updatedInformation = new Gson().fromJson(infoToUpdate, User.class);
 
 
-
+    // Down below we call the updatemethod, and afterwards we update the cache
     User updatedUser = UserController.updateUser(updatedInformation);
     UserCache.getUsers(true);
 
     if(updatedUser !=null){
-      // Dette betyder at vi henter data fra Databasen og ikke fra cachen.
+
       return Response.status(200).entity("User has now been updated").build();
     } else{
       return Response.status(400).entity("User could not be updated").build();

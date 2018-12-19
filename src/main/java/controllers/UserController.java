@@ -146,7 +146,6 @@ public class UserController {
 
 
   public static boolean deleteUser(String token) {
-    // Her skabes der forbindelse til DB
     DecodedJWT jwt = null;
     try {
       jwt = JWT.decode(token);
@@ -236,7 +235,7 @@ public class UserController {
                         rs.getString("password"),
                         rs.getString("email"));
 
-// .withClaim("exp",3600)
+
         Algorithm algorithm = Algorithm.HMAC256("CBS");
         String token = JWT.create().withClaim("Userid",user.getId()).sign(algorithm);
         user.setToken(token);

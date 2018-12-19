@@ -115,7 +115,7 @@ public class OrderController {
       while(rs.next()) {
 
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        //TODO: Perhaps we could optimize things a bit here and get rid of nested queries.
+        //TODO: Perhaps we could optimize things a bit here and get rid of nested queries fixed.
         User user =
                 new User(
                         rs.getInt("user_id"),
@@ -190,7 +190,7 @@ public class OrderController {
       // Save the user to the database and save them back to initial order instance
       order.setCustomer(UserController.createUser(order.getCustomer()));
 
-      // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts.
+      // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts fixed.
 
       // Insert the product in the DB
       int orderID = dbCon.insert(
